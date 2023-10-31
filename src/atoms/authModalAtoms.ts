@@ -2,12 +2,12 @@ import {atom} from 'recoil';
 
 type AuthModalState = {
     isOpen:boolean;
-    mode:'login' | 'register'| 'forgotPassword';
+    type:'login' | 'register'| 'forgotPassword';
 };
 
 const initialAuthModalState:AuthModalState = {
     isOpen:false,
-    mode:'login',
+    type:'login',
 };
 
 export const authModalState = atom<AuthModalState>({
