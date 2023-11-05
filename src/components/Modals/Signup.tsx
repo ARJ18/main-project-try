@@ -1,12 +1,14 @@
 import { authModalState } from "@/atoms/authModalAtoms";
 import { auth } from "@/firebase/firebase";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { useRouter } from "next/router";
 
 type SignupProps = {};
 
 const Signup: React.FC<SignupProps> = () => {
+    const router = useRouter();
     const setAuthModalState = useSetRecoilState(authModalState);
     const handleClick = (type: "login") => {
         setAuthModalState((prev) => ({
@@ -28,12 +30,30 @@ const Signup: React.FC<SignupProps> = () => {
             ...prev,
             [e.target.name]: e.target.value,
         }));
+        //console.log(inputs);
     };
 
-    const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+        //console.log(inputs);
         e.preventDefault();
-        console.log(inputs);
+        if (!inputs.email || !inputs.name || !inputs.password)
+            return alert("Please fill all fields");
+        try {
+            const newuser = await createUserWithEmailAndPassword(
+                inputs.email,
+                inputs.password
+            );
+            if (!newuser) return;
+            router.push("/");
+        } catch (error: any) {
+            alert(error.message);
+        }
     };
+
+    useEffect(() => {
+        if (error) alert(error.message);
+    }, [error]);
+
     return (
         <form className="px-6 pb-4 space-y-6" onSubmit={handleRegister}>
             <h3 className="text-xl font-medium text-white">
@@ -63,6 +83,7 @@ const Signup: React.FC<SignupProps> = () => {
                     Display Name
                 </label>
                 <input
+                    onChange={handleChangeInput}
                     type="text"
                     name="name"
                     id="name"
@@ -79,6 +100,7 @@ const Signup: React.FC<SignupProps> = () => {
                     Password
                 </label>
                 <input
+                    onChange={handleChangeInput}
                     type="password"
                     name="password"
                     id="password"
@@ -91,7 +113,7 @@ const Signup: React.FC<SignupProps> = () => {
                 type="submit"
                 className="w-full text-white focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-brand-orange hover:bg-brand-orange-s"
             >
-                Sign Up
+                {loading ? "Creating account..." : "Sign Up"}
             </button>
 
             <div className="text-sm font-medium text-gray-500">

@@ -1,5 +1,8 @@
 import { authModalState } from "@/atoms/authModalAtoms";
-import React from "react";
+import { auth } from "@/firebase/firebase";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { useSetRecoilState } from "recoil";
 
 type LoginProps = {};
@@ -12,8 +15,45 @@ const Login: React.FC<LoginProps> = () => {
             type,
         }));
     };
+
+    const [signInWithEmailAndPassword, user, loading, error] =
+        useSignInWithEmailAndPassword(auth);
+    const router = useRouter();
+    const [inputs, setInputs] = useState({
+        email: "",
+        password: "",
+    });
+
+    const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputs((prev) => ({
+            ...prev,
+            [e.target.name]: e.target.value,
+        }));
+        //console.log(inputs);
+    };
+
+    const handleLogIn = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (!inputs.email || !inputs.password)
+            return alert("Please fill all fields");
+        try {
+            const newuser = await signInWithEmailAndPassword(
+                inputs.email,
+                inputs.password
+            );
+            if (!newuser) return;
+            router.push("/");
+        } catch (error: any) {
+            alert(error.message);
+        }
+    };
+
+    useEffect(() => {
+        if (error) alert(error.message);
+    }, [error]);
+
     return (
-        <form className="px-6 pb-4 space-y-6">
+        <form className="px-6 pb-4 space-y-6" onSubmit={handleLogIn}>
             <h3 className="text-xl font-medium text-white">
                 Sign In to CodeQuest
             </h3>
@@ -25,6 +65,7 @@ const Login: React.FC<LoginProps> = () => {
                     Email Address
                 </label>
                 <input
+                    onChange={handleChangeInput}
                     type="email"
                     name="email"
                     id="email"
@@ -40,6 +81,7 @@ const Login: React.FC<LoginProps> = () => {
                     Password
                 </label>
                 <input
+                    onChange={handleChangeInput}
                     type="password"
                     name="password"
                     id="password"
@@ -52,7 +94,7 @@ const Login: React.FC<LoginProps> = () => {
                 type="submit"
                 className="w-full text-white focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-brand-orange hover:bg-brand-orange-s"
             >
-                Log In
+                {loading ? "Loading..." : "Log In"}
             </button>
 
             <button
