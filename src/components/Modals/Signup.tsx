@@ -1,10 +1,41 @@
-import React from "react";
+import { authModalState } from "@/atoms/authModalAtoms";
+import { auth } from "@/firebase/firebase";
+import React, { useState } from "react";
+import { useSetRecoilState } from "recoil";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 
 type SignupProps = {};
 
 const Signup: React.FC<SignupProps> = () => {
+    const setAuthModalState = useSetRecoilState(authModalState);
+    const handleClick = (type: "login") => {
+        setAuthModalState((prev) => ({
+            ...prev,
+            type,
+        }));
+    };
+
+    const [inputs, setInputs] = useState({
+        email: "",
+        name: "",
+        password: "",
+    });
+
+    const [createUserWithEmailAndPassword, user, loading, error] =
+        useCreateUserWithEmailAndPassword(auth);
+    const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputs((prev) => ({
+            ...prev,
+            [e.target.name]: e.target.value,
+        }));
+    };
+
+    const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log(inputs);
+    };
     return (
-        <form className="px-6 pb-4 space-y-6">
+        <form className="px-6 pb-4 space-y-6" onSubmit={handleRegister}>
             <h3 className="text-xl font-medium text-white">
                 Create an Account
             </h3>
@@ -16,6 +47,7 @@ const Signup: React.FC<SignupProps> = () => {
                     Email Address
                 </label>
                 <input
+                    onChange={handleChangeInput}
                     type="email"
                     name="email"
                     id="email"
@@ -64,7 +96,11 @@ const Signup: React.FC<SignupProps> = () => {
 
             <div className="text-sm font-medium text-gray-500">
                 Already have an account?&nbsp;
-                <a href="#" className="text-blue-700 hover:underline">
+                <a
+                    href="#"
+                    className="text-blue-700 hover:underline"
+                    onClick={() => handleClick("login")}
+                >
                     Log In
                 </a>
             </div>
