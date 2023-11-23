@@ -3,6 +3,7 @@ import { auth } from "@/firebase/firebase";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { toast } from "react-toastify";
 import { useSetRecoilState } from "recoil";
 
 type LoginProps = {};
@@ -44,12 +45,21 @@ const Login: React.FC<LoginProps> = () => {
             if (!newuser) return;
             router.push("/");
         } catch (error: any) {
-            alert(error.message);
+            toast.error(error.message, {
+                theme: "dark",
+                position: "top-center",
+                autoClose: 3000,
+            });
         }
     };
 
     useEffect(() => {
-        if (error) alert(error.message);
+        if (error)
+            toast.error(error.message, {
+                theme: "dark",
+                position: "top-center",
+                autoClose: 3000,
+            });
     }, [error]);
 
     return (
