@@ -12,9 +12,10 @@ import Timer from "../Timer/Timer";
 
 type TopbarProps = {
     problemPage?: boolean;
+    clock?: boolean;
 };
 
-const Topbar: React.FC<TopbarProps> = ({ problemPage }) => {
+const Topbar: React.FC<TopbarProps> = ({ problemPage, clock }) => {
     const [user] = useAuthState(auth);
     const setAuthModalState = useSetRecoilState(authModalState);
     return (
@@ -49,7 +50,7 @@ const Topbar: React.FC<TopbarProps> = ({ problemPage }) => {
                 )}
 
                 <div className="flex items-center space-x-4 flex-1 justify-end">
-                    <div>
+                    {/* <div>
                         <a
                             href="https://www.buymeacoffee.com/burakorkmezz"
                             target="_blank"
@@ -58,8 +59,8 @@ const Topbar: React.FC<TopbarProps> = ({ problemPage }) => {
                         >
                             Premium
                         </a>
-                    </div>
-                    <Timer />
+                    </div> */}
+                    {clock ? <Timer /> : null}
                     {!user && (
                         <Link
                             href="/auth"
