@@ -9,9 +9,14 @@ import EditorFooter from "./EditorFooter";
 type PlaygroundProps = {};
 
 const Playground: React.FC<PlaygroundProps> = () => {
-    const boilerPlate = `function twoSum(nums,target) {
-    //write your code here
-};`;
+    const boilerPlate = `function twoSum(nums, target) {
+    for (let i = 0; i < nums.length; i++) {
+        let complement = target - nums[i];
+        if (nums.includes(complement)) {
+            return [i, nums.indexOf(complement)];
+        }
+    }
+}`;
     return (
         <div className="flex flex-col relative bg-dark-layer-1 overflow-x-hidden">
             <PreferenceNav />

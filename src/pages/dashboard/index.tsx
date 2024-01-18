@@ -1,60 +1,16 @@
 import React from "react";
 import Image from "next/image";
 import Topbar from "@/components/Topbar/Topbar";
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-} from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase/firebase";
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend
-);
+import PerformanceChart from "@/components/PerformanceChart/PerformanceChart";
 
 type DashboardProps = {};
 
-const bar_options = {
-    responsive: true,
-    indexAxis: "y" as const,
-    plugins: {
-        legend: {
-            position: "top" as const,
-        },
-    },
-    scales: {
-        x: {
-            min: 0,
-            suggestedMax: 100,
-        },
-    },
-};
-
-const bar_labels = [
-    "Array",
-    "Two-Pointer",
-    "Dynamic Programming",
-    "Linked List",
-    "Stack",
-    "Queue",
-    "Heap",
-    "Greedy",
-    "Hash Table",
-    "Binary Search",
-    "Tree",
-    "Graph",
-];
-
 const Dashboard: React.FC<DashboardProps> = () => {
+    const [user] = useAuthState(auth);
+
     return (
         <>
             <Topbar clock={false} />
@@ -74,7 +30,7 @@ const Dashboard: React.FC<DashboardProps> = () => {
                                     User Details
                                 </div>
                                 <div>USERNAME</div>
-                                <div>email@gmail.com</div>
+                                <div>{user?.email}</div>
                                 <div>Date of Joining: 03-02-2023</div>
                             </div>
                         </div>
@@ -93,29 +49,10 @@ const Dashboard: React.FC<DashboardProps> = () => {
                         </div>
                     </div>
                     <div className="bg-dark-layer-1 rounded-md py-4 px-4 col-span-2 w-full">
-                        <div className="text-xl font-semibold">
+                        <div className="text-xl font-semibold pb-2">
                             Category Statistics
                         </div>
-                        <Bar
-                            data={{
-                                labels: bar_labels,
-                                datasets: [
-                                    {
-                                        label: "User Score",
-                                        data: [
-                                            20, 50, 30, 40, 50, 60, 70, 80, 90,
-                                            40, 30, 10,
-                                        ],
-                                        barThickness: 30,
-                                        type: "bar",
-
-                                        backgroundColor: "rgb(1, 102, 32)",
-                                    },
-                                ],
-                            }}
-                            options={bar_options}
-                            className="w-full"
-                        />
+                        <PerformanceChart />
                     </div>
                 </div>
             </div>
